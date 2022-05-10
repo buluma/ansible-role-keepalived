@@ -7,6 +7,8 @@ keepalived_dependencies_git:
   - libtool
   - pkg-config
   - libssl-dev
+  - libnftnl
+  - libmnl
   - procps
 keepalived_dependencies_native:
   - keepalived
