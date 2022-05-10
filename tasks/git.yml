@@ -1,14 +1,14 @@
 # tasks file
 ---
 - name: install | git | dependencies
-  apt:
+  ansible.builtin.apt:
     name: "{{ keepalived_dependencies_git }}"
     state: "{{ apt_install_state | default('latest') }}"
   tags:
     - keepalived-install-git-dependencies
 
 - name: install | git | create (checkout) directory
-  file:
+  ansible.builtin.file:
     path: "{{ keepalived_checkout_path }}"
     state: directory
     owner: root
@@ -19,7 +19,7 @@
     - keepalived-install-git-checkout-directory
 
 - name: install | git | checkout repository
-  git:
+  ansible.builtin.git:
     repo: "{{ keepalived_git_repo }}"
     dest: "{{ keepalived_checkout_path }}"
     version: "{{ keepalived_version }}"
@@ -64,7 +64,7 @@
     - keepalived-install-git-build-configure-make
 
 - name: install | git | remove (distro version)
-  apt:
+  ansible.builtin.apt:
     name: keepalived
     state: absent
     purge: true
@@ -83,7 +83,7 @@
     - keepalived-install-git-install
 
 - name: install | git | add script user
-  user:
+  ansible.builtin.user:
     name: keepalived_script
     comment: 'keepalived script'
     home: /nonexistent

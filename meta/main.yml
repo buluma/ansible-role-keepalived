@@ -1,24 +1,26 @@
 # meta file
 ---
 galaxy_info:
-  namespace: oefenweb
+  namespace: buluma
   role_name: keepalived
-  author: Mischa ter Smitten
-  company: Oefenweb.nl B.V.
+  author: Michael Buluma
+  company: ShadowNet
   description: Set up keepalived in Debian-like systems
-  license: MIT
-  min_ansible_version: 2.9.0
+  license: Apache-2.0
+  min_ansible_version: 2.10
   platforms:
     - name: Ubuntu
       versions:
-        - xenial
-        - bionic
-        - focal
+        # - xenial
+        # - bionic
+        # - focal
+        - all
     - name: Debian
       versions:
-        - jessie
-        - stretch
-        - buster
+        # - jessie
+        # - stretch
+        # - buster
+        - all
   galaxy_tags:
     - system
     - networking

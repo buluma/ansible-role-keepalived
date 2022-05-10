@@ -1,0 +1,8 @@
+---
+#
+# Ansible managed
+#
+repository:
+  description: Set up keepalived in Debian-like systems
+  homepage: https://buluma.github.io/
+  topics: system, networking, clustering, ansible, molecule, tox, playbook, hacktoberfest
