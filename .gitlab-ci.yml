@@ -24,8 +24,6 @@ molecule:
         tag: "focal"
       - image: "debian-systemd"
         tag: "latest"
-      - image: "debian-systemd"
-        tag: "bookworm"
 
 testing:
   stage: test
@@ -45,8 +43,6 @@ testing:
         tag: "focal"
       - image: "debian-systemd"
         tag: "latest"
-      - image: "debian-systemd"
-        tag: "bookworm"
 
 galaxy:
   stage: deploy
@@ -70,8 +66,6 @@ role_testing:
         tag: "focal"
       - image: "debian-systemd"
         tag: "latest"
-      - image: "debian-systemd"
-        tag: "bookworm"
 
 release_job:
   stage: .post
