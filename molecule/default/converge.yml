@@ -1,9 +1,11 @@
 ---
 - name: Converge
   hosts: all
-  become: true
+  become: yes
+  gather_facts: yes
   pre_tasks:
     - name: include vars
       include_vars: "{{ playbook_dir }}/../../tests/vars/molecule.yml"
+
   roles:
-    - ../../../
+    - role: ansible-role-keepalived
