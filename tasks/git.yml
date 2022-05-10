@@ -18,6 +18,7 @@
     - keepalived-install-git-checkout
     - keepalived-install-git-checkout-directory
 
+# TODO: Localise keepalived git repository
 - name: install | git | checkout repository
   ansible.builtin.git:
     repo: "{{ keepalived_git_repo }}"
@@ -29,7 +30,7 @@
     - keepalived-install-git-checkout-repository
 
 - name: install | git | regenerate the build files
-  shell: >
+  ansible.builtin.shell: >
     aclocal && autoheader && automake --add-missing && autoreconf
   args:
     chdir: "{{ keepalived_checkout_path }}"
@@ -42,7 +43,7 @@
     - keepalived-install-git-build-regenerate-build-files
 
 - name: install | git | regenerate the build files
-  shell: >
+  ansible.builtin.shell: >
     ./build_setup
   args:
     chdir: "{{ keepalived_checkout_path }}"
@@ -54,7 +55,7 @@
     - keepalived-install-git-build-regenerate-build-files
 
 - name: install | git | build
-  shell: >
+  ansible.builtin.shell: >
     ./configure {{ keepalived_configure_options | join(' ') }} && make -j{{ ansible_processor_cores + 1 }}
   args:
     chdir: "{{ keepalived_checkout_path }}"
@@ -73,7 +74,7 @@
     - keepalived-install-git-remove-distro
 
 - name: install | git | install
-  shell: >
+  ansible.builtin.shell: >
     make install
   args:
     chdir: "{{ keepalived_checkout_path }}"
@@ -95,7 +96,7 @@
     - keepalived-install-git-script-user
 
 - name: install | git | cleanup build
-  shell: >
+  ansible.builtin.shell: >
     git reset --hard && git clean -d -x -f
   args:
     chdir: "{{ keepalived_checkout_path }}"
