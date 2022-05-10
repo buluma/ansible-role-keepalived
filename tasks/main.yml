@@ -1,0 +1,145 @@
+# tasks file
+---
+- name: install additional
+  apt:
+    name: "{{ keepalived_install }}"
+    state: "{{ apt_install_state | default('latest') }}"
+    update_cache: true
+    cache_valid_time: "{{ apt_update_cache_valid_time | default(3600) }}"
+  tags:
+    - configuration
+    - keepalived
+    - keepalived-install
+    - keepalived-install-additional
+
+- name: install | git
+  include: git.yml
+  when: keepalived_install_method == 'git'
+  tags:
+    - configuration
+    - keepalived
+    - keepalived-install
+    - keepalived-install-git
+
+- name: install | native
+  include: native.yml
+  when: keepalived_install_method == 'native'
+  tags:
+    - configuration
+    - keepalived
+    - keepalived-install
+    - keepalived-install-native
+
+- block:
+
+    - name: allow binding non-local IPv4
+      sysctl:
+        name: net.ipv4.ip_nonlocal_bind
+        value: "{{ keepalived_ip_nonlocal_bind | string }}"
+        reload: true
+        state: present
+      when: keepalived_ip_nonlocal_bind | bool
+
+    - name: check if IPv6 is enabled
+      slurp:
+        src: /sys/module/ipv6/parameters/disable
+      register: _ipv6_disabled
+
+    - name: set ipv6_enabled fact
+      set_fact:
+        is_ipv6_enabled: "{{ not _ipv6_disabled.failed and '0' in (_ipv6_disabled.content | b64decode) }}"
+
+    - name: allow binding non-local IPv6
+      sysctl:
+        name: net.ipv6.ip_nonlocal_bind
+        value: "{{ keepalived_ip_nonlocal_bind | string }}"
+        reload: true
+        state: present
+      when:
+        - keepalived_ip_nonlocal_bind | bool
+        - is_ipv6_enabled
+
+  tags:
+    - configuration
+    - keepalived
+    - keepalived-ip-nonlocal-bind
+
+- name: stat directories
+  stat:
+    path: "{{ item }}/"
+  register: _stat_directories
+  with_items:
+    - "{{ keepalived_configuration_file | dirname }}"
+  tags:
+    - configuration
+    - keepalived
+    - keepalived-configure-directories
+    - keepalived-configure-directories-stat
+
+- name: create directories
+  file:
+    path: "{{ item.item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+  with_items: "{{ _stat_directories.results }}"
+  when: not item.stat.exists
+  tags:
+    - configuration
+    - keepalived
+    - keepalived-configure-directories
+    - keepalived-configure-directories-create
+
+- name: update configuration file
+  template:
+    src: "{{ keepalived_configuration_file.lstrip('/') }}.j2"
+    dest: "{{ keepalived_configuration_file }}"
+    owner: root
+    group: root
+    mode: 0640
+  notify: restart keepalived
+  tags:
+    - configuration
+    - keepalived
+    - keepalived-configuration
+
+- name: copy script files
+  copy:
+    src: "{{ item.value.src }}"
+    dest: "{{ item.value.dest }}"
+    owner: "{{ item.value.owner | default('root') }}"
+    group: "{{ item.value.group | default('root') }}"
+    mode: "{{ item.value.mode | default('0750') }}"
+  with_dict: "{{ keepalived_vrrp_script_map }}"
+  notify: restart keepalived
+  tags:
+    - configuration
+    - keepalived
+    - keepalived-scripts
+
+- include: service-upstart.yml
+  when: ansible_service_mgr != 'systemd'
+  tags:
+    - configuration
+    - keepalived
+    - keepalived-service
+    - keepalived-service-upstart
+
+- include: service-systemd.yml
+  when: ansible_service_mgr == 'systemd'
+  tags:
+    - configuration
+    - keepalived
+    - keepalived-service
+    - keepalived-service-systemd
+
+- name: start and enable service
+  service:
+    name: keepalived
+    state: "{{ service_default_state | default('started') }}"
+    enabled: "{{ service_default_enabled | default(true) | bool }}"
+  tags:
+    - configuration
+    - keepalived
+    - keepalived-start-enable-service

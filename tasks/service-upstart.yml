@@ -1,0 +1,12 @@
+# tasks file
+---
+- name: service | upstart | update script
+  template:
+    src: "{{ keepalived_etc_init_file.lstrip('/') }}.j2"
+    dest: "{{ keepalived_etc_init_file }}"
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart keepalived
+  tags:
+    - keepalived-service-upstart-update
