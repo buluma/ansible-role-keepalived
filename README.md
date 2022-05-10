@@ -4,7 +4,7 @@ Set up keepalived in Debian-like systems
 
 |GitHub|GitLab|Quality|Downloads|Version|Issues|Pull Requests|
 |------|------|-------|---------|-------|------|-------------|
-|[![github](https://github.com/buluma/ansible-role-keepalived/workflows/Ansible%20Molecule/badge.svg)](https://github.com/buluma/ansible-role-keepalived/actions)|[![gitlab](https://gitlab.com/buluma/ansible-role-keepalived/badges/master/pipeline.svg)](https://gitlab.com/buluma/ansible-role-keepalived)|[![quality](https://img.shields.io/ansible/quality/)](https://galaxy.ansible.com/buluma/keepalived)|[![downloads](https://img.shields.io/ansible/role/d/)](https://galaxy.ansible.com/buluma/keepalived)|[![Version](https://img.shields.io/github/release/buluma/ansible-role-keepalived.svg)](https://github.com/buluma/ansible-role-keepalived/releases/)|[![Issues](https://img.shields.io/github/issues/buluma/ansible-role-keepalived.svg)](https://github.com/buluma/ansible-role-keepalived/issues/)|[![PullRequests](https://img.shields.io/github/issues-pr-closed-raw/buluma/ansible-role-keepalived.svg)](https://github.com/buluma/ansible-role-keepalived/pulls/)|
+|[![github](https://github.com/buluma/ansible-role-keepalived/workflows/Ansible%20Molecule/badge.svg)](https://github.com/buluma/ansible-role-keepalived/actions)|[![gitlab](https://gitlab.com/buluma/ansible-role-keepalived/badges/master/pipeline.svg)](https://gitlab.com/buluma/ansible-role-keepalived)|[![quality](https://img.shields.io/ansible/quality/59138)](https://galaxy.ansible.com/buluma/keepalived)|[![downloads](https://img.shields.io/ansible/role/d/59138)](https://galaxy.ansible.com/buluma/keepalived)|[![Version](https://img.shields.io/github/release/buluma/ansible-role-keepalived.svg)](https://github.com/buluma/ansible-role-keepalived/releases/)|[![Issues](https://img.shields.io/github/issues/buluma/ansible-role-keepalived.svg)](https://github.com/buluma/ansible-role-keepalived/issues/)|[![PullRequests](https://img.shields.io/github/issues-pr-closed-raw/buluma/ansible-role-keepalived.svg)](https://github.com/buluma/ansible-role-keepalived/pulls/)|
 
 ## [Example Playbook](#example-playbook)
 
@@ -15,12 +15,11 @@ This example is taken from `molecule/default/converge.yml` and is tested on each
   hosts: all
   become: yes
   gather_facts: yes
-  pre_tasks:
-    - name: include vars
-      include_vars: "{{ playbook_dir }}/../../tests/vars/molecule.yml"
 
   roles:
     - role: buluma.keepalived
+      keepalived_options:
+        - name: log-detail
 ```
 
 The machine needs to be prepared. In CI this is done using `molecule/default/prepare.yml`:
@@ -28,8 +27,11 @@ The machine needs to be prepared. In CI this is done using `molecule/default/pre
 ---
 - name: Prepare
   hosts: all
-  become: true
-  tasks: []
+  gather_facts: no
+  become: yes
+
+  roles:
+    - role: buluma.bootstrap
 ```
 
 
@@ -68,6 +70,13 @@ keepalived_vrrp_instances: {}
 
 - pip packages listed in [requirements.txt](https://github.com/buluma/ansible-role-keepalived/blob/main/requirements.txt).
 
+## [Status of used roles](#status-of-requirements)
+
+The following roles are used to prepare a system. You can prepare your system in another way.
+
+| Requirement | GitHub | GitLab |
+|-------------|--------|--------|
+|[buluma.bootstrap](https://galaxy.ansible.com/buluma/bootstrap)|[![Build Status GitHub](https://github.com/buluma/ansible-role-bootstrap/workflows/Ansible%20Molecule/badge.svg)](https://github.com/buluma/ansible-role-bootstrap/actions)|[![Build Status GitLab ](https://gitlab.com/buluma/ansible-role-bootstrap/badges/main/pipeline.svg)](https://gitlab.com/buluma/ansible-role-bootstrap)|
 
 ## [Context](#context)
 
@@ -83,8 +92,8 @@ This role has been tested on these [container images](https://hub.docker.com/u/b
 
 |container|tags|
 |---------|----|
-|ubuntu|all|
-|debian|all|
+|ubuntu|xenial, bionic, focal|
+|debian|jessie, stretch, buster|
 
 The minimum version of Ansible required is 2.1, tests have been done to:
 

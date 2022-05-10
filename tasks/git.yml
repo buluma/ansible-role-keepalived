@@ -18,6 +18,7 @@
     - keepalived-install-git-checkout
     - keepalived-install-git-checkout-directory
 
+# TODO: Localise keepalived git repository
 - name: install | git | checkout repository
   ansible.builtin.git:
     repo: "{{ keepalived_git_repo }}"
