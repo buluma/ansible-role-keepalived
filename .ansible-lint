@@ -10,8 +10,8 @@ exclude_paths:
   - ./.tox
   - ./.cache
 
-skip_list:
+warn_list:
   - '106'
   - no-handler
   - command-instead-of-module
-  # - yaml
+  - yaml
