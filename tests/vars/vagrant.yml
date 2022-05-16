@@ -58,6 +58,3 @@ keepalived_vrrp_instances:
 
     track_scripts:
       - chk_sshd
-
-    # notify: "{{ keepalived_vrrp_script_map['keepalived-notify']['dest'] }}"
-    # notify_user: root

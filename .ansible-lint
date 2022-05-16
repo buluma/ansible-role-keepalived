@@ -10,7 +10,7 @@ exclude_paths:
   - ./.tox
   - ./.cache
 
-warn_list:
+skip_list:
   - '106'
   - no-handler
   - command-instead-of-module
