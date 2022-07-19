@@ -40,7 +40,6 @@
     - keepalived-install-native
 
 - block:
-
     - name: allow binding non-local IPv4
       ansible.posix.sysctl:
         name: net.ipv4.ip_nonlocal_bind
