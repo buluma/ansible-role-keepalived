@@ -1,0 +1,10 @@
+---
+#
+# Ansible managed
+#
+argument_specs:
+  main:
+    short_description: Set up keepalived in Debian-like systems
+    description: >
+      Set up keepalived in Debian-like systems
+    author: Michael Buluma

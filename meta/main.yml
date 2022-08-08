@@ -19,4 +19,5 @@ galaxy_info:
     - system
     - networking
     - clustering
+
 dependencies: []
