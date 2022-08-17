@@ -24,7 +24,7 @@
 
 # V3rsion 2
 # git remote add origin-new git@gitlab.com:buluma/ansible-role-keepalived.git
-echo "Pushing to GitLab"
+echo "Pushing to GitLab.."
 
 git remote -v
 git add . && git commit -m "Local push"
