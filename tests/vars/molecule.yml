@@ -1,4 +1,0 @@
-# vars file
----
-keepalived_options:
-  - name: log-detail

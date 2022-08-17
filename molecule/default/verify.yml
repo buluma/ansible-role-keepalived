@@ -1,5 +1,10 @@
 ---
 - name: Verify
   hosts: all
-  become: true
-  tasks: []
+  become: yes
+  gather_facts: yes
+
+  tasks:
+    - name: check keepalived
+      ansible.builtin.command:
+        cmd: keepalived --check

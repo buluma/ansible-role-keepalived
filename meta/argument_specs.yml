@@ -4,7 +4,7 @@
 #
 argument_specs:
   main:
-    short_description: Set up keepalived in Debian-like systems
+    short_description: Install and configure keepalived
     description: >
-      Set up keepalived in Debian-like systems
+      Install and configure keepalived
     author: Michael Buluma

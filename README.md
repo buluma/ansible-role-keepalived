@@ -1,6 +1,6 @@
 # [keepalived](#keepalived)
 
-Set up keepalived in Debian-like systems
+Install and configure keepalived
 
 |GitHub|GitLab|Quality|Downloads|Version|Issues|Pull Requests|
 |------|------|-------|---------|-------|------|-------------|
@@ -11,24 +11,36 @@ Set up keepalived in Debian-like systems
 This example is taken from `molecule/default/converge.yml` and is tested on each push, pull request and release.
 ```yaml
 ---
-- name: Converge
+- name: converge
   hosts: all
   become: yes
   gather_facts: yes
 
   roles:
     - role: buluma.keepalived
-      keepalived_options:
-        - name: log-detail
+      keepalived_vrrp_instances:
+        - name: VI_1
+          state: MASTER
+          interface: eth0
+          unicast_src_ip: "172.17.0.6"
+          secondary_private_ip: "172.17.0.7"
+          virtual_router_id: 51
+          priority: 255
+          authentication:
+            auth_type: PASS
+            auth_pass: "12345"
+          virtual_ipaddresses:
+            - name: "172.17.0.8"
+              cidr: 16
 ```
 
 The machine needs to be prepared. In CI this is done using `molecule/default/prepare.yml`:
 ```yaml
 ---
-- name: Prepare
+- name: prepare
   hosts: all
-  gather_facts: no
   become: yes
+  gather_facts: no
 
   roles:
     - role: buluma.bootstrap
@@ -39,31 +51,46 @@ The machine needs to be prepared. In CI this is done using `molecule/default/pre
 
 The default values for the variables are set in `defaults/main.yml`:
 ```yaml
-# defaults file
 ---
-keepalived_install_method: git
-keepalived_git_repo: https://github.com/acassen/keepalived.git
-keepalived_version: v2.2.2
-keepalived_install: []
-keepalived_configure_options: []
-keepalived_options: []
+# defaults file for keepalived
 
-keepalived_ip_nonlocal_bind: '1'
+# By default, there is not configuration, because there is no "sane default" to
+# set. You'll have to set it yourself. Here are a few hints.
+#
+# Have a look in `molecule/default/converge.yml` for an example.
+# You do not need to set the state to `MASTER`, all nodes can also be set to
+# `BACKUP`, in which case a random host will be selected to configure the
+# virtual IP. Setting `state` to `MASTER` only initially sets that host to be
+# the master. Over time, other nodes will likely become master.
+#
+# You can see the configure virtual IP using `ip addr list eth0`.
 
-keepalived_create_keepalived_script_user: false
-
-keepalived_global_defs_notification_email:
-  - 'root@localhost.localdomain'
-keepalived_global_defs_notification_email_from: 'root@localhost.localdomain'
-keepalived_global_defs_smtp_server: '127.0.0.1'
-keepalived_global_defs_smtp_connect_timeout: 30
-
-keepalived_vrrp_script_map: {}
-
-keepalived_vrrp_scripts: {}
-keepalived_vrrp_track_processes: {}
-
-keepalived_vrrp_instances: {}
+# keepalived_vrrp_instances:
+#   # `name` defines an individual instance of the VRRP protocol running on an interface.
+#   - name: VI_1
+#   # `state` defines the initial state that the instance should start in.
+#     state: MASTER
+#   # `interface` defines the interface that VRRP runs on.
+#     interface: eth0
+#   # `unicast_src_ip` contains the primary address for unicasts.
+#     unicast_src_ip: "192.168.1.1"
+#   # `secondary_private_ip` refers the the peer's unicast address.
+#     secondary_private_ip: "192.168.1.2"
+#   # `virtual_router_id` is the unique identifier.
+#     virtual_router_id: 51
+#   # `priority` is the advertised priority.
+#     priority: 255
+#   # `check_status_command` will make +3 to priority if command return is 0 (optional). example:
+#     check_status_command: /sbin/postfix status
+#   # `authentication` specifies the information necessary for servers participating in VRRP to authenticate with each other.
+#     authentication:
+#       auth_type: PASS
+#       auth_pass: 12345
+#   # `virtual_ipaddress` defines the IP addresses (there can be multiple) that VRRP is responsible for.
+#     virtual_ipaddresses:
+#       - name: "192.168.122.200"
+#         cidr: 24
+keepalived_vrrp_instances: []
 ```
 
 ## [Requirements](#requirements)
@@ -92,8 +119,12 @@ This role has been tested on these [container images](https://hub.docker.com/u/b
 
 |container|tags|
 |---------|----|
-|ubuntu|bionic, focal|
+|alpine|all|
+|el|8|
 |debian|all|
+|fedora|all|
+|opensuse|all|
+|ubuntu|all|
 
 The minimum version of Ansible required is 2.10, tests have been done to:
 

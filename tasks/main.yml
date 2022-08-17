@@ -1,154 +1,27 @@
-# tasks file
 ---
-# prepare
-- name: debian | apt-get install *.deb
-  ansible.builtin.raw: |
-    set -eu
-    DEBIAN_FRONTEND=noninteractive apt-get install -y bzip2 ca-certificates curl gcc gnupg gzip hostname iproute2 passwd procps python3 python3-apt python3-jmespath python3-lxml python3-pip python3-setuptools python3-venv python3-virtualenv python3-wheel rsync sudo tar unzip util-linux xz-utils zip libmnl
-  when: ansible_os_family | lower == "debian"
-  changed_when: false
-  failed_when: false
+# tasks file for keepalived
 
-- name: install additional
-  ansible.builtin.apt:
-    name: "{{ keepalived_install }}"
-    state: "{{ apt_install_state | default('latest') }}"
-    update_cache: true
-    cache_valid_time: "{{ apt_update_cache_valid_time | default(3600) }}"
-  tags:
-    - configuration
-    - keepalived
-    - keepalived-install
-    - keepalived-install-additional
+- name: import assert.yml
+  ansible.builtin.import_tasks: assert.yml
+  run_once: yes
+  delegate_to: localhost
 
-- name: install | git
-  include: git.yml
-  when: keepalived_install_method == 'git'
-  tags:
-    - configuration
-    - keepalived
-    - keepalived-install
-    - keepalived-install-git
+- name: install keepalived
+  ansible.builtin.package:
+    name: keepalived
+    state: present
 
-- name: install | native
-  include: native.yml
-  when: keepalived_install_method == 'native'
-  tags:
-    - configuration
-    - keepalived
-    - keepalived-install
-    - keepalived-install-native
-
-- name: binding nonlocal IPv4
-  block:
-    - name: allow binding non-local IPv4
-      ansible.posix.sysctl:
-        name: net.ipv4.ip_nonlocal_bind
-        value: "{{ keepalived_ip_nonlocal_bind | string }}"
-        reload: true
-        state: present
-      when: keepalived_ip_nonlocal_bind | bool
-
-    - name: check if IPv6 is enabled
-      ansible.builtin.slurp:
-        src: /sys/module/ipv6/parameters/disable
-      register: _ipv6_disabled
-
-    - name: set ipv6_enabled fact
-      ansible.builtin.set_fact:
-        is_ipv6_enabled: "{{ not _ipv6_disabled.failed and '0' in (_ipv6_disabled.content | b64decode) }}"
-
-    - name: allow binding non-local IPv6
-      ansible.posix.sysctl:
-        name: net.ipv6.ip_nonlocal_bind
-        value: "{{ keepalived_ip_nonlocal_bind | string }}"
-        reload: true
-        state: present
-      when:
-        - keepalived_ip_nonlocal_bind | bool
-        - is_ipv6_enabled
-
-  tags:
-    - configuration
-    - keepalived
-    - keepalived-ip-nonlocal-bind
-
-- name: stat directories
-  ansible.builtin.stat:
-    path: "{{ item }}/"
-  register: _stat_directories
-  with_items:
-    - "{{ keepalived_configuration_file | dirname }}"
-  tags:
-    - configuration
-    - keepalived
-    - keepalived-configure-directories
-    - keepalived-configure-directories-stat
-
-- name: create directories
-  ansible.builtin.file:
-    path: "{{ item.item }}"
-    state: directory
-    owner: root
-    group: root
-    mode: 0755
-  with_items: "{{ _stat_directories.results }}"
-  when: not item.stat.exists
-  tags:
-    - configuration
-    - keepalived
-    - keepalived-configure-directories
-    - keepalived-configure-directories-create
-
-- name: update configuration file
+- name: configure keepalived
   ansible.builtin.template:
-    src: "{{ keepalived_configuration_file.lstrip('/') }}.j2"
-    dest: "{{ keepalived_configuration_file }}"
-    owner: root
-    group: root
-    mode: 0640
-  notify: restart keepalived
-  tags:
-    - configuration
-    - keepalived
-    - keepalived-configuration
+    src: keepalived.conf.j2
+    dest: /etc/keepalived/keepalived.conf
+    mode: "0640"
+    validate: keepalived --config-test --use-file=%s
+  notify:
+    - restart keepalived
 
-- name: copy script files
-  ansible.builtin.copy:
-    src: "{{ item.value.src }}"
-    dest: "{{ item.value.dest }}"
-    owner: "{{ item.value.owner | default('root') }}"
-    group: "{{ item.value.group | default('root') }}"
-    mode: "{{ item.value.mode | default('0750') }}"
-  with_dict: "{{ keepalived_vrrp_script_map }}"
-  notify: restart keepalived
-  tags:
-    - configuration
-    - keepalived
-    - keepalived-scripts
-
-- include: service-upstart.yml
-  when: ansible_service_mgr != 'systemd'
-  tags:
-    - configuration
-    - keepalived
-    - keepalived-service
-    - keepalived-service-upstart
-
-- include: service-systemd.yml
-  when: ansible_service_mgr == 'systemd'
-  tags:
-    - configuration
-    - keepalived
-    - keepalived-service
-    - keepalived-service-systemd
-
-- name: start and enable service
+- name: start keepalived
   ansible.builtin.service:
     name: keepalived
-    state: "{{ service_default_state | default('started') }}"
-    enabled: "{{ service_default_enabled | default(true) | bool }}"
-  tags:
-    - configuration
-    - keepalived
-    - keepalived-start-enable-service
+    state: started
+    enabled: yes

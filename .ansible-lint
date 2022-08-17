@@ -9,9 +9,5 @@ exclude_paths:
   - ./molecule/default/collections.yml
   - ./.tox
   - ./.cache
-
-skip_list:
-  - '106'
-  - no-handler
-  - command-instead-of-module
-  - yaml
+  - ./.github
+  - ./requirements.yml

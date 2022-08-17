@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/zsh
 
 # Arguments:
 #   ${1}: Username
@@ -24,5 +24,9 @@
 
 # V3rsion 2
 # git remote add origin-new git@gitlab.com:buluma/ansible-role-keepalived.git
+echo "Pushing to GitLab"
+
+git remote -v
 git add . && git commit -m "Local push"
 git push origin-new
+git push origin
