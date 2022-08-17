@@ -28,5 +28,5 @@ echo "Pushing to GitLab"
 
 git remote -v
 git add . && git commit -m "Local push"
-git push origin-new
+git push gitlab
 git push origin
