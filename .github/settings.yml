@@ -5,4 +5,4 @@
 repository:
   description: Install and configure keepalived
   homepage: https://buluma.github.io/
-  topics: keepalived, ansible, molecule, tox, playbook, hacktoberfest
+  topics: keepalived, ansible, molecule, tox, playbook
