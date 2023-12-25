@@ -144,7 +144,7 @@ If you find issues, please register them in [GitHub](https://github.com/buluma/a
 
 ## [License](#license)
 
-[Apache-2.0](https://github.com/buluma/ansible-role-keepalived/blob/master/LICENSE).
+[Apache-2.0](https://github.com/buluma/ansible-role-keepalived/blob/master/LICENSE)
 
 ## [Author Information](#author-information)
 
