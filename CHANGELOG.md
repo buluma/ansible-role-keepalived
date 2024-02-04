@@ -1,5 +1,13 @@
 # Changelog
 
+## [Unreleased](https://github.com/buluma/ansible-role-keepalived/tree/HEAD)
+
+[Full Changelog](https://github.com/buluma/ansible-role-keepalived/compare/0.3.0...HEAD)
+
+**Merged pull requests:**
+
+- Bump release-drafter/release-drafter from 5 to 6 [\#21](https://github.com/buluma/ansible-role-keepalived/pull/21) ([dependabot[bot]](https://github.com/apps/dependabot))
+
 ## [0.3.0](https://github.com/buluma/ansible-role-keepalived/tree/0.3.0) (2024-01-20)
 
 [Full Changelog](https://github.com/buluma/ansible-role-keepalived/compare/0.2.0...0.3.0)
