@@ -5,7 +5,7 @@
   gather_facts: yes
 
   roles:
-    - role: ansible-role-keepalived
+    - role: buluma.keepalived
       keepalived_vrrp_instances:
         - name: VI_1
           state: MASTER
