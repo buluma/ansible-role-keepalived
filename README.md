@@ -12,40 +12,40 @@ This example is taken from [`molecule/default/converge.yml`](https://github.com/
 
 ```yaml
 ---
-  - name: Converge
-    hosts: all
-    become: yes
-    gather_facts: yes
+- name: Converge
+  hosts: all
+  become: yes
+  gather_facts: yes
 
-    roles:
-      - role: buluma.keepalived
-        keepalived_vrrp_instances:
-          - name: VI_1
-            state: MASTER
-            interface: eth0
-            unicast_src_ip: "172.17.0.6"
-            secondary_private_ip: "172.17.0.7"
-            virtual_router_id: 51
-            priority: 255
-            authentication:
-              auth_type: PASS
-              auth_pass: "12345"
-            virtual_ipaddresses:
-              - name: "172.17.0.8"
-                cidr: 16
+  roles:
+  - role: buluma.keepalived
+    keepalived_vrrp_instances:
+    - name: VI_1
+      state: MASTER
+      interface: eth0
+      unicast_src_ip: "172.17.0.6"
+      secondary_private_ip: "172.17.0.7"
+      virtual_router_id: 51
+      priority: 255
+      authentication:
+        auth_type: PASS
+        auth_pass: "12345"
+      virtual_ipaddresses:
+      - name: "172.17.0.8"
+        cidr: 16
 ```
 
 The machine needs to be prepared. In CI this is done using [`molecule/default/prepare.yml`](https://github.com/buluma/ansible-role-keepalived/blob/master/molecule/default/prepare.yml):
 
 ```yaml
 ---
-  - name: prepare
-    hosts: all
-    become: yes
-    gather_facts: no
+- name: prepare
+  hosts: all
+  become: yes
+  gather_facts: no
 
-    roles:
-      - role: buluma.bootstrap
+  roles:
+  - role: buluma.bootstrap
 ```
 
 Also see a [full explanation and example](https://buluma.github.io/how-to-use-these-roles.html) on how to use these roles.
