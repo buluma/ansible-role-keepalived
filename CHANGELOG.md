@@ -1,5 +1,9 @@
 # Changelog
 
+## [26.6.0](https://github.com/buluma/ansible-role-keepalived/tree/26.6.0) (2026-06-14)
+
+[Full Changelog](https://github.com/buluma/ansible-role-keepalived/compare/24.3.31...26.6.0)
+
 ## [24.3.31](https://github.com/buluma/ansible-role-keepalived/tree/24.3.31) (2024-03-29)
 
 [Full Changelog](https://github.com/buluma/ansible-role-keepalived/compare/0.3.0...24.3.31)
