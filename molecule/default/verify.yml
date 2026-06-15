@@ -7,5 +7,5 @@
   tasks:
     - name: check keepalived
       ansible.builtin.command:
-      changed_when: false
         cmd: keepalived --check
+      changed_when: false
